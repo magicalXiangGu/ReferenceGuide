@@ -3,19 +3,33 @@ Architectural Overview
 
 CQRS on itself is a very simple pattern. It only prescribes that the component of an application that processes commands should be separated from the component that processes queries. Although this separation is very simple on itself, it provides a number of very powerful features when combined with other patterns. Axon provides the building blocks that make it easier to implement the different patterns that can be used in combination with CQRS.
 
+CQRS 本身是个非常简单的模式。它仅仅描述了一个应用程序的查询端与命令端应该彼此分离。虽然这种分离本身非常简单，但它与其他模式结合时提供了许多非常强大的特性。Axon提供的模块使不同的模式易于与CQRS结合使用。
+
 The diagram below shows an example of an extended layout of a CQRS-based event driven architecture. The UI component, displayed on the left, interacts with the rest of the application in two ways: it sends commands to the application (shown in the top section), and it queries the application for information (shown in the bottom section).
+
+下图是一个CQRS基于事件驱动的架构示意图。左侧显示的UI组件以两种方式与应用程序的其余部分交互：发送命令，查询信息。
 
 ![Architecture overview of a CQRS application](detailed-architecture-overview.png)
 
 Commands are typically represented by simple and straightforward objects that contain all data necessary for a command handler to execute it. A command expresses its intent by its name. In Java terms, that means the class name is used to figure out what needs to be done, and the fields of the command provide the information required to do it.
 
+命令通常由简单而直接的对象表示，这些对象包含命令处理器响应该命令所需的所有数据。命令以其名称表示意图。在Java里使用类名称表示需要做什么，命令类字段提供所需要的信息。
+
 The Command Bus receives commands and routes them to the Command Handlers. Each command handler responds to a specific type of command and executes logic based on the contents of the command. In some cases, however, you would also want to execute logic regardless of the actual type of command, such as validation, logging or authorization.
+
+命令总线接收命令并路由他们到相应的命令处理器。每个命令处理器响应特定类型的命令，并根据命令的内容执行逻辑。然而，有些情况，你希望执行逻辑，而不考虑实际的命令类型，例如验证、日志记录或授权。
 
 The command handler retrieves domain objects (Aggregates) from a repository and executes methods on them to change their state. These aggregates typically contain the actual business logic and are therefore responsible for guarding their own invariants. The state changes of aggregates result in the generation of Domain Events. Both the Domain Events and the Aggregates form the domain model.
 
+命令处理器从仓库获取领域对象（聚合），并执行聚合内改变它们状态的方法。这些聚合通常包含实际的业务逻辑，因此聚合本身负责维护自己的状态。领域事件产生聚合状态的变化。领域事件与聚合共同组成领域模型。
+
 Repositories are responsible for providing access to aggregates. Typically, these repositories are optimized for lookup of an aggregate by its unique identifier only. Some repositories will store the state of the aggregate itself (using Object Relational Mapping, for example), while others store the state changes that the aggregate has gone through in an Event Store. The repository is also responsible for persisting the changes made to aggregates in its backing storage.
 
+库是负责获取聚合。通常，这些仓库被优化为只能通过唯一的标识查寻聚合。一些仓库负责存储聚合本身的状态（例如：ORM），然而一些其他的仓库（Event Store）存储聚合状态改变的过程。仓库还负责持久化其后备存储中聚合所做的更改。
+
 Axon provides support for both the direct way of persisting aggregates (using object-relational-mapping, for example) and for event sourcing.
+
+Axon提供了直接持久化聚合（例如使用ORM）和事件溯源的支持。
 
 The event bus dispatches events to all interested event listeners. This can either be done synchronously or asynchronously. Asynchronous event dispatching allows the command execution to return and hand over control to the user, while the events are being dispatched and processed in the background. Not having to wait for event processing to complete makes an application more responsive. Synchronous event processing, on the other hand, is simpler and is a sensible default. By default, synchronous processing will process event listeners in the same transaction that also processed the command.
 
