@@ -76,30 +76,50 @@ The Core module contains, as the name suggests, the Core components of Axon. If 
 
 The Test module contains test fixtures that you can use to test Axon based components, such as your Command Handlers, Aggregates and Sagas. You typically do not need this module at runtime and will only need to be added to the classpath during tests.
 
-
+测试模块包含的测试装置，可以用来检测Axon的基础组件，如命令处理器、聚合和Sagas。通常在运行时不需要这个模块，只需要在测试时添加到类路径。
 
 The Distributed CommandBus modules contain implementations that can be used to distribute commands over multiple nodes. It comes with JGroups and Spring Cloud Connectors that are used to connect these nodes.
 
+分布式命令总线模块可用于实现在多个节点间发送命令。它使用JGroups和Spring连接器来连接这些节点。
+
 The AMQP module provides components that allow you to build up an EventBus using an AMQP-based message broker as distribution mechanism. This allows for guaranteed-delivery, even when the Event Handler node is temporarily unavailable.
+
+AMQP模块提供的组件，允许你建立一个分发机制为AMQP-based消息代理的EventBus。即使在事件处理节点暂时不可用时也可以保证传递。
 
 The Spring module allows Axon components to be configured in the Spring Application context. It also provides a number of building block implementations specific to Spring Framework, such as an adapter for publishing and retrieving Axon Events on a Spring Messaging Channel.
 
+Spring模块允许Axon组件被配置在Spring应用程序上下文中。它还提供了一些特定于Spring框架的模块，例如在Spring Messaging Channel上发布和接受Axon事件的适配器。
+
 MongoDB is a document based NoSQL database. The Mongo module provides Event and Saga Store implementations that store event streams and sagas in a MongoDB database.
 
+MongoDB是一个基于NoSQL的文档数据库。Mongo模块提供了Event and Saga Store将event streams and sagas存储到MongoDB数据库。
+
 Several AxonFramework components provide monitoring information. The Metrics module provides basic implementations based on Codehale to collect the monitoring information. 
+
+部分axonframework组件提供监测信息。Metrics模块提供基于Codehale收集检测信息的基础实现。
 
 Working with Axon APIs
 ======================
 
 CQRS is an architectural pattern, making it impossible to provide a single solution that fits all projects. Axon Framework does not try to provide that one solution, obviously. Instead, Axon provides implementations that follow best practices and the means to tweak each of those implementations to your specific requirements.
 
+CQRS是一种架构模式，所以它不可能提供一个适合所有项目的单一解决方案。显然，AXOn框架并不试图提供一个解决方案。相反，Axon提供了遵循最佳实践的实现，以及将每个实现调整到特定需求的方法。
+
 Almost all infrastructure building blocks will provide hook points (such as Interceptors, Resolvers, etc.) that allow you to add application-specific behavior to those building blocks. In many cases, Axon will provide implementations for those hook points that fit most use cases. If required, you can simply implement your own.
+
+几乎所有的基础设施模块将提供钩子（如拦截解析器，等），允许在这些模块上添加程序的特定行为。大多数情况下，Axon将为这些钩子提供适合大多数用例的实现。如果需要，你可以简单地实现你自己的。
 
 Non-infrastructural objects, such as Messages, are generally immutable. This ensures that these objects are safe to use in a multi-threaded environment, without side-effects.
 
+非基础对象，如信息，一般是不变的。这样可以确保这些对象在多线程环境中使用是安全的，没有副作用。
+
 To ensure maximum customization, all Axon components are defined using interfaces. Abstract and concrete implementations are provided to help you on your way, but will nowhere be required by the framework. It is always possible to build a completely custom implementation of any building block using that interface.
+
+为了确保最大化的定制，Axon的所有组件都使用接口定义。提供了抽象和具体的实现来帮助您，而且不受框架的限制。将使用该接口构建任何一个完全自定义实现的模块变为可能。
 
 Spring Support
 ==============
 
 Axon Framework provides extensive support for Spring, but does not require you to use Spring in order to use Axon. All components can be configured programmatically and do not require Spring on the classpath. However, if you do use Spring, much of the configuration is made easier with the use of Spring's annotation support.
+
+Axon框架为Spring提供了广泛的支持，但并不要求必须使用Spring来使用Axon。所有的组件可以以编程方式配置，不需要在类路径中添加Spring。但是，如果您确实使用Spring，那么使用Spring的注释将使配置变得更加容易。
