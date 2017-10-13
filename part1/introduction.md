@@ -3,7 +3,12 @@ Introduction
 
 Axon is a lightweight framework that helps developers build scalable and extensible applications by addressing these concerns directly in the architecture. This reference guide explains what Axon is, how it can help you and how you can use it.
 
+Axon是一个轻量级框架，可帮助开发人员在架构层直接构建可伸缩和可扩展的应用程序。
+本参考指南解释了Axon是什么，它如何够帮助你和你如何使用它。
+
 If you want to know more about Axon and its background, continue reading in [Axon Framework Background](#axon-framework-background). If you're eager to get started building your own application using Axon, go quickly to [Getting Started](#getting-started). If you're interested in helping out building the Axon Framework, [Contributing](#contributing-to-axon-framework) will contain the information you require. All help is welcome. Finally, this chapter covers some legal concerns in [License](#license-information).
+
+如果你想进一步了解Axon和其背景，继续阅读[Axon Framework Background](#axon-framework-background).如果你想尽快使用Axon构建自己的应用， -> [Getting Started](#getting-started).
 
 Axon Framework Background
 =========================
@@ -13,7 +18,11 @@ A brief history
 
 The demands on software projects increase rapidly as time progresses. Companies want their (web)applications to evolve together with their business. That means that not only projects and code bases become more complex, it also means that functionality is constantly added, changed and (unfortunately not enough) removed. It can be frustrating to find out that a seemingly easy-to-implement feature can require development teams to take apart an entire application. Furthermore, today's web applications target the audience of potentially billions of people, making scalability an indisputable requirement.
 
+随着时间的推移软件项目的需求迅速增加。公司希望他们的（Web）应用程序与他们的业务一起进化。这意味着不仅项目和基础代码变得更加复杂，它还意味着功能不断地被添加、改变和（不幸的是不够）被移除。发现一个看似容易实现的特性可能需要开发团队拆开整个应用程序，这可能令人沮丧。此外，今天的Web应用程序瞄准了潜在的数十亿人的受众，使可伸缩性成为一个无可争辩的要求。
+
 Although there are many applications and frameworks around that deal with scalability issues, such as GigaSpaces and Terracotta, they share one fundamental flaw. These stacks try to solve the scalability issues while letting developers develop applications using the layered architecture they are used to. In some cases, they even prevent or severely limit the use of a real domain model, forcing all domain logic into services. Although that is faster to start building an application, eventually this approach will cause complexity to increase and development to slow down.
+
+虽然在解决可扩展性问题有许多应用程序和框架，如GigaSpaces和Terracotta，但他们有一个根本的缺陷。这些程序试图解决可伸缩性问题，同时让开发人员使用它们所使用的分层体系结构开发应用程序。
 
 The Command Query Responsibility Segregation (CQRS) pattern addresses these issues by drastically changing the way applications are architected. Instead of separating logic into separate layers, logic is separated based on whether it is changing an application's state or querying it. That means that executing commands (actions that potentially change an application's state) are executed by different components than those that query for the application's state. The most important reason for this separation is the fact that there are different technical and non-technical requirements for each of them. When commands are executed, the query components are (a)synchronously updated using events. This mechanism of updates through events, is what makes this architecture so extensible, scalable and ultimately more maintainable.
 
