@@ -112,9 +112,15 @@ Besides storing the current state of an Aggregate, it is also possible to rebuil
 
 For the major part, Event Sourced Aggregates are similar to 'regular' aggregates: they must declare an identifier and can use the `apply` method to publish Events. However, state changes in Event Sourced Aggregates (i.e. any change of a Field value) must be *exclusively* performed in an `@EventSourcingHandler` annotated method. This includes setting the Aggregate Identifier.
 
+对于主要的部分，事件溯源聚合与“常规”聚合相似：它们必须声明一个标识符，并且可以使用apply方法来发布事件。但是，必须在@EventSourcingHandler注释方法中专门执行事件溯源聚合中的状态更改（即字段值的任何更改）。这包括设置聚合标识符。
+
 Note that the Aggregate Identifier must be set in the `@EventSourcingHandler` of the very first Event published by the Aggregate. This is usually the creation Event.
 
+请注意，聚合标识符必须在由Aggregate发布的第一个事件的@EventSourcingHandler中设置。这通常是创建事件。
+
 The Aggregate Root of an Event Sourced Aggregate must also contain a no-arg constructor. Axon Framework uses this constructor to create an empty Aggregate instance before initialize it using past Events. Failure to provide this constructor will result in an Exception when loading the Aggregate.
+
+一个事件溯源聚合的聚合根也必须包含一个无参数构造函数。 Axon Framework使用此构造函数在使用过去的事件初始化之前创建一个空的聚合实例。不提供此构造函数将导致加载Aggregate时出现异常。
 
 ``` java
 public class MyAggregateRoot {
@@ -145,17 +151,31 @@ public class MyAggregateRoot {
 
 `@EventSourcingHandler` annotated methods are resolved using specific rules. These rules are the same for the `@EventHandler` annotated methods, and are thoroughly explained in [Annotated Event Handler](./event-handling.md#defining-event-handlers).
 
+@EventSourcingHandler注释方法使用特定的规则解决。这些规则与@EventHandler注释方法相同，并进行了详细解释in [Annotated Event Handler](./event-handling.md#defining-event-handlers)。
+
 > **Note**
 >
 > Event handler methods may be private, as long as the security settings of the JVM allow the Axon Framework to change the accessibility of the method. This allows you to clearly separate the public API of your aggregate, which exposes the methods that generate events, from the internal logic, which processes the events.
 >
 > Most IDE's have an option to ignore "unused private method" warnings for methods with a specific annotation. Alternatively, you can add an `@SuppressWarnings("UnusedDeclaration")` annotation to the method to make sure you don't accidentally delete an Event handler method.
 
+ **Note**
+>
+>事件处理程序方法可能是私有的，只要JVM的安全设置允许Axon Framework更改方法的可访问性。这允许您清楚地分离聚合的公共API，它公开了从内部逻辑中生成事件的方法，这些内部逻辑处理事件。
+>
+> 大多数IDE可以选择忽略具有特定注释的方法的“未使用的私有方法”警告。或者，您可以向该方法添加一个@SuppressWarnings(“UnusedDeclaration”)注释，以确保不会意外删除事件处理程序方法。
+
 In some cases, especially when aggregate structures grow beyond just a couple of entities, it is cleaner to react on events being published in other entities of the same aggregate. However, since Event Handler methods are also invoked when reconstructing aggregate state, special precautions must be taken.
+
+在某些情况下，特别是当聚合结构不仅仅是几个实体增长时，对于在同一聚合体的其他实体中发布的事件做出反应更为清晰。然而，由于事件处理程序方法在重建聚合状态时也被调用，因此必须采取特殊的预防措施。
 
 It is possible to `apply()` new events inside an Event Sourcing Handler method. This makes it possible for an Entity B to apply an event in reaction to Entity A doing something. Axon will ignore the apply() invocation when replaying historic events. Do note that, in this case, the Event of the inner `apply()` invocation is only published to the Entities after all Entities have received the first Event. If more events need to be published, based on the state of an entity after applying an inner event, use `apply(...).andThenApply(...)`
 
+可以在Event Sourcing Handler方法中`apply()`新事件。Entity B可能发送一个事件对应Entity A做某些事情。当重播历史事件时，Axon将忽略apply()调用。请注意，在这种情况下，内部apply()调用的事件仅在所有实体收到第一个事件后才发布到Entities。如果需要发布更多的事件，基于应用内部事件之后的实体的状态，使用`apply(...).andThenApply(...)`
+
 You can also use the static `AggregateLifecycle.isLive()` method to check whether the aggregate is 'live'. Basically, an aggregate is considered live if it has finished replaying historic events. While replaying these events, isLive() will return false. Using this `isLive()` method, you can perform activity that should only be done when handling newly generated events.
+
+您还可以使用静态`AggregateLifecycle.isLive()`方法来检查聚合是否为“live”。基本上，如果已经完成重播历史事件，则聚合被视为实时的。在重播这些事件时，isLive() 将返回false。Using this `isLive()` method,您可以执行只应在处理新生成的事件时执行的活动。
 
 Complex Aggregate structures
 ----------------------------
