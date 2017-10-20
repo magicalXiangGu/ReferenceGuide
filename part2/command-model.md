@@ -3,11 +3,17 @@ Command Model
 
 In a CQRS-based application, a Domain Model (as defined by Eric Evans and Martin Fowler) can be a very powerful mechanism to harness the complexity involved in the validation and execution of state changes. Although a typical Domain Model has a great number of building blocks, one of them plays a dominant role when applied to Command processing in CQRS: the Aggregate.
 
+在基于CQRS的应用程序中，领域模型（由Eric Evans和Martin Fowler定义）可以是一个非常强大的机制，驾驭涉及验证和执行改变状态的复杂性。虽然典型的域模型具有大量的构建块，但是当应用于CQRS中的命令处理时，其中一个占据主导地位：Aggregate。
+
 A state change within an application starts with a Command. A Command is a combination of expressed intent (which describes what you want done) as well as the information required to undertake action based on that intent. The Command Model is used to process the incoming command, to validate it and define the outcome. Within this model, a Command Handler is responsible for handling commands of a certain type and taking action based on the information contained inside it.
+
+应用程序中的状态更改以命令开头。命令是表达意图（描述您想要完成的内容）以及基于该意图进行操作所需的信息的组合。命令模块用于处理传入的命令，以验证它并定义结果。在该模块中，命令处理器负责处理某种类型的命令，并根据其中包含的信息采取行动。
 
 Aggregate
 ---------
 An Aggregate is an entity or group of entities that is always kept in a consistent state. The Aggregate Root is the object on top of the aggregate tree that is responsible for maintaining this consistent state. This makes the Aggregate the prime building block for implementing a Command Model in any CQRS based application.
+
+聚合是一个始终处于一致状态的实体或实体组。聚合根是聚合树之上的对象，负责维护此一致状态。这使得聚合是在任何基于CQRS的应用程序中实现命令模型的主要构建块。
 
 > **Note**
 >
@@ -15,9 +21,19 @@ An Aggregate is an entity or group of entities that is always kept in a consiste
 >
 > “A cluster of associated objects that are treated as a unit for the purpose of data changes. External references are restricted to one member of the Aggregate, designated as the root. A set of consistency rules applies within the Aggregate's boundaries.”
 
+> **Note**
+>
+> 术语“聚合”是指由领域驱动设计中的Evans定义的集合：
+>
+>作为以更改数据为目的的单元的关联对象集群。外部引用仅限于聚合的根成员。一组一致性规则适用于Aggregate的边界。
+
 For example, a "Contact" aggregate could contain two entities: Contact and Address. To keep the entire aggregate in a consistent state, adding an address to a contact should be done via the Contact entity. In this case, the Contact entity is the appointed aggregate root.
 
+例如，“联系人”聚合可以包含两个实体：联系人和地址。为了使整个聚合保持一致状态，可以通过联系人实体向联系人添加地址。在这种情况下，“联系人”实体是指定的聚合根。
+
 In Axon, aggregates are identified by an Aggregate Identifier. This may be any object, but there are a few guidelines for good implementations of identifiers. Identifiers must:
+
+在Axon中，聚合由Aggregate Identifier标识。这可能是任何对象，但是有一些准则可以很好地实现标识符。标识符必须：
 
 -   implement `equals` and `hashCode` to ensure good equality comparison with other instances,
 
@@ -25,7 +41,13 @@ In Axon, aggregates are identified by an Aggregate Identifier. This may be any o
 
 -   preferably be `Serializable`.
 
+-   实现equals和hashCode以确保与其他实例的良好的等式比较，
+-   实现一个提供一致结果的toString())方法（等同的标识符应该提供一个相等的toString()结果）
+-   并且可序列化
+
 The test fixtures (see [Testing](testing.md)) will verify these conditions and fail a test when an Aggregate uses an incompatible identifier. Identifiers of type `String`, `UUID` and the numeric types are always suitable. Do **not** use primitive types as identifiers, as they don't allow for lazy initialization. Axon may, in some circumstances, falsely assume the default value of a primitive to be the value of the identifier.
+
+测试fixtures(see [Testing](testing.md))将验证这些条件，并且当聚合使用不兼容的标识符时测试失败。类型为String，UUID和数字类型的标识符始终是合适的。不要使用原始类型作为标识符，因为它们不允许进行延迟初始化。在某些情况下，Axon可能会将原语的默认值误认为是标识符的值。
 
 > **Note**
 >
@@ -33,16 +55,29 @@ The test fixtures (see [Testing](testing.md)) will verify these conditions and f
 >
 > Furthermore, be careful when using functional identifiers for aggregates. They have a tendency to change, making it very hard to adapt your application accordingly.
 
+
+> **Note**
+>
+> 使用随机生成的标识符被认为是一种很好的做法，而不是排序的标识符。使用序列大大降低了应用程序的可扩展性，因为机器需要保持最新的最后使用的序列号。与UUID发生冲突的记录，率很小（如果生成8.2 × 10 <sup>11</sup> 个UUID，则为10<sup>−15</sup>的几率）。此外，在使用聚合的功能标识符时要小心。他们有变化的趋势，很难适应您的应用程序
+
 Aggregate implementations
 -------------------------
 An Aggregate is always accessed through a single Entity, called the Aggregate Root. Usually, the name of this Entity is the same as that of the Aggregate entirely. For example, an Order Aggregate may consist of an Order entity, which references several OrderLine entities. Order and Orderline together, form the Aggregate.
 
+总是通过单个Entity访问聚合，称为聚合根。通常，该实体的名称与Aggregate的名称完全相同。例如，订单集合可以由一个订单实体组成，其中引用了多个OrderLine实体。Order和Orderline一起，形成总计。
+
 An Aggregate is a regular object, which contains state and methods to alter that state. Although not entirely correct according to CQRS principles, it is also possible to expose the state of the aggregate through accessor methods.
+
+聚合是一个常规对象，它包含状态和方法来更改该状态。虽然根据CQRS原则不是完全正确的，但也可以通过访问器方法暴露聚合体的状态
 
 An Aggregate Root must declare a field that contains the Aggregate identifier. This identifier must be initialized at the latest when the first Event is published. This identifier field must be annotated by the `@AggregateIdentifier` annotation.
 If you use JPA and have JPA annotations on the aggregate, Axon can also use the `@Id` annotation provided by JPA.
 
+聚合根必须声明包含聚合标识符的字段。这个标识符必须在第一个事件发布时最早进行初始化。此标识符字段必须由@AggregateIdentifier注释注释。如果您使用JPA并在聚合上使用JPA注释，Axon还可以使用JPA提供的@Id注释。
+
 Aggregates may use the `AggregateLifecycle.apply()` method to register events for publication. Unlike the `EventBus`, where messages need to be wrapped in an EventMessage, `apply()` allows you to pass in the payload object directly.
+
+聚合可以使用AggregateLifecycle.apply()方法来注册用于发布的事件。与EventBus不同的是，消息需要包装在EventMessage中，apply()可以让您直接传入有效负载对象。
 
 ``` java
 @Entity // Mark this aggregate as a JPA Entity
@@ -67,9 +102,13 @@ public class MyAggregate {
 
 Entities within an Aggregate can listen to the events the Aggregate publishes, by defining an `@EventHandler` annotated method. These methods will be invoked when an EventMessage is published (before any external handlers are published).
 
+Aggregate中的实体可以通过定义一个@EventHandler注释方法来监听Aggregate发布的事件。当发布EventMessage（在发布任何外部处理程序之前）时，将调用这些方法。
+
 Event sourced aggregates
 ------------------------
 Besides storing the current state of an Aggregate, it is also possible to rebuild the state of an Aggregate based on the Events that it has published in the past. For this to work, all state changes must be represented by an Event.
+
+除了存储聚合的当前状态之外，还可以基于过去发布的事件来重建聚合的状态。为了使其工作，所有状态更改必须由事件表示。
 
 For the major part, Event Sourced Aggregates are similar to 'regular' aggregates: they must declare an identifier and can use the `apply` method to publish Events. However, state changes in Event Sourced Aggregates (i.e. any change of a Field value) must be *exclusively* performed in an `@EventSourcingHandler` annotated method. This includes setting the Aggregate Identifier.
 
