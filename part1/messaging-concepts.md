@@ -92,7 +92,7 @@ You are unlikely to need direct access to the Unit of Work. It is mainly used by
 
 One reason to require access to the current Unit of Work is to attach resources that need to be reused several times during the course of message processing, or if created resources need to be cleaned up when the Unit of Work completes. In such case, the `unitOfWork.getOrComputeResource()` and the lifecycle callback methods, such as `onRollback()`, `afterCommit()` and `onCleanup()` allow you to register resources and declare actions to be taken during the processing of this Unit of Work.
 
-要求访问当前工作单元的一个原因是在消息处理过程中附加需要重复使用的资源，或者当工作单元完成时需要清除创建的资源。在这种情况下，unitOfWork.getOrComputeResource（）和生命周期回调方法（如onRollback（），afterCommit（）和onCleanup（））可以让您注册资源和声明在处理本工作单元期间需要采取的操作。
+要求访问当前工作单元的一个原因是在消息处理过程中附加需要重复使用的资源，或者当工作单元完成时需要清除创建的资源。在这种情况下，unitOfWork.getOrComputeResource()和生命周期回调方法（如onRollback()，afterCommit()和onCleanup()）可以让您注册资源和声明在处理本工作单元期间需要采取的操作。
 
 > **Note**
 >
