@@ -181,12 +181,21 @@ Complex Aggregate structures
 ----------------------------
 Complex business logic often requires more than what an aggregate with only an aggregate root can provide. In that case, it is important that the complexity is spread over a number of entities within the aggregate. When using event sourcing, not only the aggregate root needs to use events to trigger state transitions, but so does each of the entities within that aggregate.
 
+复杂的业务逻辑通常需要的不仅仅是一个只含有聚合根的聚合能提供的。在这种情况下，重要的是复杂性分布在聚合体内的多个实体中。当使用事件源时，不仅聚合根需要使用事件来触发状态转换，而且聚合中的每个实体也是如此。
+
 > ** Note **
 > A common misinterpretation of the rule that Aggregates should not expose state is that none of the Entities should contain any property accessor methods. This is not the case. In fact, an Aggregate will probably benefit a lot if the entities *within* the aggregate expose state to the other entities in that same aggregate. However, is is recommended not to expose the state *outside* of the Aggregate.
 
+> ** Note **
+> 对规则的常见误解，聚合不应该暴露状态，实体不应包含任何属性访问方法。情况并非如此。事实上，如果聚合中的实体将状态暴露给同一集合中的其他实体，那么聚合可能会受益匪浅。但是，建议不要暴露状态在聚合之外。
+
 Axon provides support for event sourcing in complex aggregate structures. Entities are, just like the Aggregate Root, simple objects. The field that declares the child entity must be annotated with `@AggregateMember`. This annotation tells Axon that the annotated field contains a class that should be inspected for Command and Event Handlers.
 
+Axon为复杂聚合结构提供事件溯源支持。实体就像聚合根一样，是简单的对象。声明子实体的字段必须注明`@aggregatemember`。这个注释告诉Axon，带注释的字段包含一个应该检查命令和事件处理程序的类。
+
 When an Entity (including the Aggregate Root) applies an Event, it is handled by the Aggregate Root first, and then bubbles down through all `@AggregateMember` annotated fields to its child entities.
+
+当一个实体（包括总根）响应一个事件，它是由总根先处理，然后通过`@aggregatemember`注释字段的子实体。
 
 Fields that (may) contain child entities must be annotated with `@AggregateMember`. This annotation may be used on a number of field types:
 
@@ -195,6 +204,15 @@ Fields that (may) contain child entities must be annotated with `@AggregateMembe
 -   inside fields containing an `Iterable` (which includes all collections, such as `Set`, `List`, etc);
 
 -   inside the values of fields containing a `java.util.Map`
+
+
+字段（可能）包含子实体必须注明`@aggregatemember`。此注释可用于许多字段类型：字段到其子实体。
+
+-   实体类型，直接引用在一个字段中;
+
+-   实体在`Iterable`的字段中 (which includes all collections, such as `Set`, `List`, etc);
+
+-   实体字段在 `java.util.Map`中。
 
 ### Handling commands in an Aggregate
 
