@@ -220,11 +220,19 @@ It is recommended to define the Command Handlers directly in the Aggregate that 
 
 To define a Command Handler in an Aggregate, simply annotate the Command Handling method with `@CommandHandler`. The rules for an `@CommandHandler` annotated method are the same as for any handler method. However, Commands are not only routed by their payload. Command Messages carry a name, which defaults to the fully qualified class name of the Command object.
 
+要在聚合中定义一个命令处理程序，只需使用`@CommandHandler`注解命令处理方法。`@CommandHandler` 注解方法的规则与任何处理程序方法相同。但是，命令不仅由其有效载荷进行路由。命令消息带有一个名称，默认为Command对象的完全限定类名。
+
 By default, `@CommandHandler` annotated methods allow the following parameter types:
 
 -   The first parameter is the payload of the Command Message. It may also be of type `Message` or `CommandMessage`, if the `@CommandHandler` annotation explicitly defined the name of the Command the handler can process. By default, a Command name is the fully qualified class name of the Command's payload.
 
+
+默认情况下，命令名称是Command的有效载荷的完全限定的类名。
+
+
 -   Parameters annotated with `@MetaDataValue` will resolve to the Meta Data value with the key as indicated on the annotation. If `required` is `false` (default), `null` is passed when the meta data value is not present. If `required` is `true`, the resolver will not match and prevent the method from being invoked when the meta data value is not present.
+
+
 
 -   Parameters of type `MetaData` will have the entire `MetaData` of a `CommandMessage` injected.
 
