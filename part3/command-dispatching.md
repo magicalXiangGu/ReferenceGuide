@@ -303,17 +303,27 @@ Spring Cloud Connector
 
 The Spring Cloud Connector setup uses the service registration and discovery mechanism described by [Spring Cloud](http://projects.spring.io/spring-cloud/) for distributing the Command Bus. You are thus left free to choose which Spring Cloud implementation to use to distribute your commands. An example implementations is the Eureka Discovery/Eureka Server combination.
  
+ Spring Cloud Connector分发命令总线的设置使用[Spring Cloud]（http://projects.spring.io/spring-cloud/）的服务注册和发现机制。因此，您可以自由选择使用Spring Cloud实现来分发命令。一个示例实现是Eureka Discovery/Eureka Server器组合。
+
  > **Note**
  >
  > The current version (Axon 3.0.4) `SpringCloudCommandRouter` uses the `ServiceInstance.Metadata` field to inform all the nodes in the system which commands it can handle through a `CommandNameFilter`. It is thus of importance that the Spring Cloud implementation selected supports the usage of the ServiceInstance.Metadata field. Spring Cloud Consul for example currently does not support that field, hence is not a viable solution for the `SpringCloudCommandRouter`. We are working on an additional solution to retrieve the `CommandNameFilter` from. 
 
+当前版本（Axon 3.0.4）`SpringCloudCommandRouter`使用`ServiceInstance.Metadata`字段通过`CommandNameFilter`通知系统中可以处理该命令的所有节点。因此，选择Spring Cloud实现支持使用ServiceInstance.Metadata字段是非常重要的。例如Spring Cloud Consul目前不支持该字段，因此对于`SpringCloudCommandRouter`来说，这不是一个可行的解决方案。我们正在开发一个额外的解决方案来从中检索`CommandNameFilter`。
+
 Giving a description of every Spring Cloud implementation would push this reference guide to far. Hence we refer to their respective documentations for further information.
+
+描述每一个Spring云的实现将把这个参考指南推向遥远。因此，我们参考他们各自的文件以获得进一步的信息。
 
 The Spring Cloud Connector setup is a combination of the `SpringCloudCommandRouter` and a `SpringHttpCommandBusConnector`, which respectively fill the place of the `CommandRouter` and the `CommandBusConnector` for the `DistributedCommandBus`.
   
+Spring Cloud Connector设置是`SpringCloudCommandRouter`和`SpringHttpCommandBusConnector`的组合，它们分别填充了`CommandRouter`和`CommandBusConnector`的`DistributedCommandBus`。
+
 > **Note**
 >
 > The Spring Cloud Connector specific components for the `DistributedCommandBus` can be found in the `axon-distributed-commandbus-springcloud` module.
+
+`DistributedCommandBus`的Spring Cloud Connector特定组件可以在`axon-distributed-commandbus-springcloud`模块中找到。
 
 The `SpringCloudCommandRouter` has to be created by providing the following:
 
